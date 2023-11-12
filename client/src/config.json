@@ -1,0 +1,23 @@
+{
+	"backendBaseUrl": "http://localhost:5002",
+	"addUserEndpoint": "users",
+	"checkEndpoint": "password",
+	"addCollectionEndpoint": "collections",
+	"addItemEndpoint": "collections/{collectionId}/item",
+
+	"getCollectionIdEndpoint": "{userId}/collection",
+	"getCollectionEndpoint": "collections/{collectionId}",
+	"getItemEndpoint": "collections/{collectionId}/{itemId}",
+	"getAllItemsEndpoint": "collection/{collectionId}/items",
+
+	"getUserEndpoint": "users/{userId}",
+
+	"updateUserEndpoint": "users/{userId}",
+	"updateCollectionEndpoint": "collections/{collectionId}",
+	"updateItemEndpoint": "collections/{collectionId}/{itemId}",
+
+	"deleteUserEndpoint": "users/{userId}",
+	"deleteCollectionEndpoint": "collections/{collectionId}",
+	"deleteItemEndpoint": "collections/{collectionId}/{itemId}"
+
+}

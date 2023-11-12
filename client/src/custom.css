@@ -1,0 +1,79 @@
+.form-group input.form-control { 
+  margin: 5px;
+  width: 70%; 
+}
+
+.App {
+  margin: 3%;
+}
+.form-floating {
+  margin-top: 1%;
+
+}
+.extra-field-table{
+  margin: 1% 0 ;
+}
+.button-space{
+  margin-top:1% ;
+}
+.registration_container {
+border-radius: 14px;
+  border: 5px ridge rgb(173, 9, 132);
+
+/* background-color: rgb(165, 204, 255); */
+padding: 3%;
+}
+.btn-collection {
+  margin: 3%;
+}
+.autentification_container {
+margin-bottom: 20px;
+border-radius: 14px;
+  border: 5px ridge rgb(173, 9, 132);
+
+/* background-color: rgb(161, 224, 249); */
+padding: 3%;
+
+}
+.breadcrumb_custom {
+  display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 5%;
+    justify-content: flex-end;
+}
+
+.breadcrumb_hello {
+  margin-top: revert;
+}
+
+.action_toolbar{
+  display: flex;
+  flex-direction: row;
+  gap: 5%;
+  margin-left:4%;
+}
+.icon{
+  cursor: pointer;
+  width: 40px;
+}
+
+
+.table {
+  margin-top: 5%;
+}
+
+.checking_container {
+  margin-top: 5%;
+  border: 5px ridge rgb(109, 4, 158);
+  border-radius: 10px;
+  /* background-color: rgba(161, 255, 203, 0.798); */
+  padding: 3%;
+}
+
+.header_custom{
+    margin-bottom: 3%;
+    border-radius: 10px;
+      background-color: rgba(191, 134, 195, 0.524);
+    padding: 3%;
+}
