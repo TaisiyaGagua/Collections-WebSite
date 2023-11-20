@@ -1,7 +1,6 @@
 import axios, { AxiosHeaders, RawAxiosRequestHeaders } from "axios";
 import { ApiResultWrapper } from "../common/api_result_wrapper";
 import config from "../config.json";
-import { User } from "../dtos/user";
 import { CheckUserDto } from "../dtos/requests/check_user_dto";
 import { CheckUserResponse } from "../dtos/responses/check_user_response";
 import { UpdateUserDto } from "../dtos/requests/update_user_dto";
@@ -13,33 +12,33 @@ import { CreateCollectionDto } from "../dtos/requests/create_collection_dto";
 import { CreateCollectionResponse } from "../dtos/responses/create_collection_response";
 import { ItemDto } from "../dtos/requests/create_item_dto";
 import { CreateItemResponse } from "../dtos/responses/create_item_response";
+import { UpdateCollectionDto } from "../dtos/requests/update_collection_dto";
 
-const baseUrl = config.backendBaseUrl;
+const baseUrl = process.env.REACT_APP_BACKEND_URL;
+
 const headers: RawAxiosRequestHeaders | AxiosHeaders = {
     Accept: "application/json",
 };
 
-export async function getUsersAsync(): Promise<ApiResultWrapper<User[]>> {
-    const url = baseUrl + "/" + config.getUserEndpoint;
+export async function getUserAsync(
+    userId: string
+): Promise<ApiResultWrapper<UserResponseDto>> {
+    let url = baseUrl + "/" + config.getUserEndpoint;
+    url = url.replace("{userId}", userId);
 
     try {
-        const response = await axios.get<UserResponseDto[]>(url, {
+        const response = await axios.get<UserResponseDto>(url, {
             headers,
         });
 
-        const usersWithDateObjects = response.data.map((user) => ({
-            ...user,
-            id: user._id,
-        }));
-
-        const result: ApiResultWrapper<User[]> = {
-            data: usersWithDateObjects,
+        const result: ApiResultWrapper<UserResponseDto> = {
+            data: response.data,
             error: undefined,
         };
 
         return result;
     } catch (error) {
-        const result: ApiResultWrapper<User[]> = {
+        const result: ApiResultWrapper<UserResponseDto> = {
             data: undefined,
             error: error as string,
         };
@@ -48,7 +47,7 @@ export async function getUsersAsync(): Promise<ApiResultWrapper<User[]>> {
     }
 }
 
-export async function createUser(
+export async function createUserAsync(
     userToCreate: CreateUserDto
 ): Promise<ApiResultWrapper<CheckUserResponse>> {
     const url = baseUrl + "/" + config.addUserEndpoint;
@@ -72,7 +71,7 @@ export async function createUser(
     }
 }
 
-export async function checkUser(
+export async function checkUserAsync(
     payload: CheckUserDto
 ): Promise<ApiResultWrapper<CheckUserResponse>> {
     const url = baseUrl + "/" + config.checkEndpoint;
@@ -96,7 +95,7 @@ export async function checkUser(
     }
 }
 
-export async function updateUser(
+export async function updateUserAsync(
     userId: string | null,
     payload: UpdateUserDto
 ): Promise<ApiResultWrapper<any>> {
@@ -105,7 +104,7 @@ export async function updateUser(
         url = url.replace("{userId}", userId);
     }
     try {
-        const response = await axios.patch(url, payload, { headers });
+        const response = await axios.put(url, payload, { headers });
 
         const result: ApiResultWrapper<any> = {
             data: response.data,
@@ -123,11 +122,12 @@ export async function updateUser(
     }
 }
 
-export async function deleteUser(payload: CheckUserDto) {
-    const url = baseUrl + "/" + config.checkEndpoint;
+export async function deleteUserAsync(userId: string | null) {
+    let url = baseUrl + "/" + config.deleteUserEndpoint;
+    if (userId) url = url.replace("{userId}", userId);
 
     try {
-        const response = await axios.post(url, payload, { headers });
+        const response = await axios.delete(url);
 
         const result: ApiResultWrapper<CheckUserResponse> = {
             data: response.data,
@@ -145,7 +145,7 @@ export async function deleteUser(payload: CheckUserDto) {
     }
 }
 
-export async function getCollectionId(
+export async function getCollectionByUserIdAsync(
     userId: string
 ): Promise<ApiResultWrapper<CollectionIdResponseDto>> {
     let url = baseUrl + "/" + config.getCollectionIdEndpoint;
@@ -169,7 +169,8 @@ export async function getCollectionId(
         return result;
     }
 }
-export async function getCollection(
+
+export async function getCollectionAsync(
     collection_id: string
 ): Promise<ApiResultWrapper<CollectionResponseDto>> {
     let url = baseUrl + "/" + config.getCollectionEndpoint;
@@ -193,7 +194,8 @@ export async function getCollection(
         return result;
     }
 }
-export async function createCollection(
+
+export async function createCollectionAsync(
     collectionToCreate: CreateCollectionDto
 ): Promise<ApiResultWrapper<CreateCollectionResponse>> {
     const url = baseUrl + "/" + config.addCollectionEndpoint;
@@ -217,7 +219,33 @@ export async function createCollection(
     }
 }
 
-export async function deleteCollection(collectionId: string) {
+export async function updateCollectionAsync(
+    collectionId: string,
+    payload: UpdateCollectionDto
+): Promise<ApiResultWrapper<UpdateCollectionDto>> {
+    let url = baseUrl + "/" + config.updateCollectionEndpoint;
+
+    url = url.replace("{collectionId}", collectionId);
+
+    try {
+        const response = await axios.put(url, payload, { headers });
+
+        const result: ApiResultWrapper<UpdateCollectionDto> = {
+            data: response.data,
+            error: undefined,
+        };
+
+        return result;
+    } catch (error) {
+        const result: ApiResultWrapper<UpdateCollectionDto> = {
+            data: undefined,
+            error: error as string,
+        };
+
+        return result;
+    }
+}
+export async function deleteCollectionAsync(collectionId: string) {
     let url = baseUrl + "/" + config.deleteCollectionEndpoint;
     url = url.replace("{collectionId}", collectionId);
 
@@ -240,7 +268,7 @@ export async function deleteCollection(collectionId: string) {
     }
 }
 
-export async function getAllItems(
+export async function getAllItemsAsync(
     collection_id: string
 ): Promise<ApiResultWrapper<any>> {
     let url = baseUrl + "/" + config.getAllItemsEndpoint;
@@ -265,7 +293,7 @@ export async function getAllItems(
         return result;
     }
 }
-export async function createItem(
+export async function createItemAsync(
     ItemToCreate: ItemDto,
     collectionId: string
 ): Promise<ApiResultWrapper<CreateItemResponse>> {

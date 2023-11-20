@@ -1,5 +1,4 @@
 {
-	"backendBaseUrl": "http://localhost:5002",
 	"addUserEndpoint": "users",
 	"checkEndpoint": "password",
 	"addCollectionEndpoint": "collections",
@@ -9,7 +8,6 @@
 	"getCollectionEndpoint": "collections/{collectionId}",
 	"getItemEndpoint": "collections/{collectionId}/{itemId}",
 	"getAllItemsEndpoint": "collection/{collectionId}/items",
-
 	"getUserEndpoint": "users/{userId}",
 
 	"updateUserEndpoint": "users/{userId}",
