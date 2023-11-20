@@ -15,14 +15,14 @@ import UserRoleSchema from "./models/user_role";
 const app = express();
 const cors = require("cors");
 
-require("dotenv").config({ path: "./config.env" });
+require("dotenv").config({ path: "./.env" });
 
 const port = process.env.PORT || 5002;
 app.use(cors());
 app.use(express.json());
 
 app.listen(port, async () => {
-    await DataAccess.connect();
+    await DataAccess.connect(process.env.ATLAS_URI!);
     console.log(`Server is running on port: ${port}`);
 });
 
@@ -71,6 +71,7 @@ app.post("/password", async (req, res) => {
                 success: true,
                 message: "Login successful",
                 username: found.username,
+                email: found.email,
                 userId: found.id,
             });
         } else {

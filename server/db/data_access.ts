@@ -1,12 +1,9 @@
 import mongoose from "mongoose";
 
-const connectionString =
-    "mongodb+srv://TaisiyaGagya:55470012yeS@cluster0.bunhab6.mongodb.net/?retryWrites=true&w=majority";
-
 class DataAccess {
     constructor() {}
 
-    static async connect() {
+    static async connect(connectionString: string) {
         await mongoose.connect(connectionString, {
             connectTimeoutMS: 20000,
             socketTimeoutMS: 20000,

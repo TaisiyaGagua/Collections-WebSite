@@ -1,8 +1,9 @@
 import { faker } from "@faker-js/faker";
 const MongoClient = require("mongodb").MongoClient;
 
-const mongoURI =
-    "mongodb+srv://TaisiyaGagya:55470012yeS@cluster0.bunhab6.mongodb.net/?retryWrites=true&w=majority";
+require("dotenv").config({ path: "../.env" });
+
+const mongoURI = process.env.ATLAS_URI!;
 
 async function seedDatabase() {
     try {
