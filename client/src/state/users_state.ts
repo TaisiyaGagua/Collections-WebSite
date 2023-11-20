@@ -1,26 +1,42 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { User } from "../dtos/user";
 
-const initialState: User[] = [];
+const initialState: User = {
+    id: "",
+    username: "",
+    email: "",
+    password: "",
+};
 
-const usersSlice = createSlice({
-    name: "users",
-    initialState: initialState,
+const userSlice = createSlice({
+    name: "user",
+    initialState,
     reducers: {
-        getUsersRequest: () => {},
-        getUsersSuccess: (state, action) => {
-            state.splice(0, state.length, ...action.payload);
+        createUserRequest: (_, action) => {},
+        createUserSuccess: (state, action) => {
+            state.id = action.payload.id;
+            state.username = action.payload.username;
+            state.email = action.payload.email;
         },
-        getUsersFailure: (state, action) => {},
-     
+        createUserFailure: (state, action) => {},
+
+        getUserRequest: (_, action) => {},
+        getUserSuccess: (state, action) => {
+            state.id = action.payload.id;
+            state.username = action.payload.username;
+            state.email = action.payload.email;
+        },
+        getUserFailure: (state, action) => {},
     },
 });
 
 export const {
+    createUserRequest,
+    createUserSuccess,
+    createUserFailure,
+    getUserRequest,
+    getUserSuccess,
+    getUserFailure,
+} = userSlice.actions;
 
-    getUsersRequest,
-    getUsersSuccess,
-    getUsersFailure,
-} = usersSlice.actions;
-
-export default usersSlice.reducer;
+export default userSlice.reducer;

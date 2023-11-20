@@ -1,17 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
+import editCollectionReducer from "../state/edit_collection_state";
 import createSagaMiddleware from "redux-saga";
+import { collectionSaga } from "../saga/collection_saga";
 import userReducer from "../state/users_state";
-import { userSaga } from "../saga/user_saga";
 
 const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
     reducer: {
-        users: userReducer,
+        editCollectionState: editCollectionReducer,
+        userState:userReducer
+
     },
     middleware: [sagaMiddleware],
 });
 
-sagaMiddleware.run(userSaga);
+sagaMiddleware.run(collectionSaga);
 
 export default store;

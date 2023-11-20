@@ -1,61 +1,52 @@
-import { takeEvery, put, call, all } from "redux-saga/effects";
-import { getUsersAsync, updateUser } from "../services/api_client";
-import { UpdateUserDto } from "../dtos/requests/update_user_dto";
+import { getUserAsync, updateUserAsync } from "../services/api_client";
+import { takeEvery, put, call } from "redux-saga/effects";
+import {
+    getUserFailure,
+    getUserSuccess,
+    createUserFailure,
+    createUserRequest,
+    createUserSuccess,
+} from "../state/users_state";
 import { ApiResultWrapper } from "../common/api_result_wrapper";
+import { UserResponseDto } from "../dtos/responses/user_response_dto";
 import { User } from "../dtos/user";
-import { getUsersFailure, getUsersSuccess } from "../state/users_state";
 
-function* blockUsers(action: {
+function* getUser(action: {
     type: string;
-    payload: string[];
-}): Generator<any, void, ApiResultWrapper<any>> {
+    payload: any;
+}): Generator<any, void, ApiResultWrapper<User[]>> {
+    let response: ApiResultWrapper<User[]> = {
+        data: undefined,
+        error: undefined,
+    };
     try {
-        const userIds = action.payload;
-
-        // Create an array of promises for blocking users
-        const payload = { status: "Blocked" } as UpdateUserDto;
-        const blockPromises = userIds.map((userId) =>
-            call(updateUser, userId, payload)
-        );
-
-        // Wait for all promises to resolve
-        yield all(blockPromises);
-    } catch (error) {
-        // Dispatch a failure action
+        response = yield call(getUserAsync, action.payload);
+        yield put(getUserSuccess(response.data));
+    } catch {
+        yield put(getUserFailure(response.error));
     }
 }
-
-// function* unblockUser(action: { type: string; payload: string[] }) {
+// export function* updateCollection(action: {
+//     type: string;
+//     payload: CollectionResponseDto;
+// }): Generator<any, void, ApiResultWrapper<UpdateCollectionDto>> {
+//     let response: ApiResultWrapper<UpdateCollectionDto> = {
+//         data: undefined,
+//         error: undefined,
+//     };
 //     try {
-//         const userIds = action.payload;
-
-//         const payload = { status: "Active" } as UpdateUserRequest;
-//         const unblockPromises = userIds.map((userId) =>
-//             call(updateUser, userId, payload)
+//         response = yield call(
+//             createUserRequest,
+//             action.payload._id,
+//             action.payload
 //         );
-
-//         yield all(unblockPromises);
-
-//         yield put(unblockUsersSuccess(userIds));
-//     } catch (error) {
-//         yield put(unblockUsersFailure(error as string));
+//         yield put(updateCollectionSuccess(response.data));
+//     } catch {
+//         yield put(updateCollectionFailure(response.error));
 //     }
 // }
 
-function* getUsers(action: {
-    type: string;
-    payload: string[];
-}): Generator<any, void, ApiResultWrapper<User[]>> {
-    try {
-        const response = yield call(getUsersAsync);
-        yield put(getUsersSuccess(response.data));
-    } catch (error) {
-        yield put(getUsersFailure({}));
-    }
-}
-
-export function* userSaga() {
-    yield takeEvery("users/blockUsersRequest", blockUsers);
-    //yield takeEvery("users/unblockUsersRequest", unblockUser);
-    yield takeEvery("users/getUsersRequest", getUsers);
+export function* collectionSaga() {
+    yield takeEvery("user/getUserRequest", getUser);
+    // yield takeEvery("editCollection/updateCollectionRequest", updateCollection);
 }
