@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { checkUser } from "../services/api_client";
+import { checkUserAsync } from "../services/api_client";
 import { CheckUserDto } from "../dtos/requests/check_user_dto";
 
 const Auth: React.FC = () => {
@@ -11,7 +11,7 @@ const Auth: React.FC = () => {
     const handleLogin = async (email: string, password: string) => {
         try {
             const payload = { email, password } as CheckUserDto;
-            const response = await checkUser(payload);
+            const response = await checkUserAsync(payload);
 
             if (response.error || response.data?.success === false) {
                 window.alert(response.data?.message);
@@ -20,6 +20,8 @@ const Auth: React.FC = () => {
             if (response.data?.success) {
                 localStorage.setItem("isAuthenticated", "true");
                 localStorage.setItem("username", `${response.data.username}`);
+                localStorage.setItem("email", `${response.data.email}`);
+
                 localStorage.setItem("userId", `${response.data.userId}`);
 
                 navigate("/authorised");

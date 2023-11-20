@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { createItem, getAllItems, getCollection } from "../services/api_client";
+import {
+    createItemAsync,
+    getAllItemsAsync,
+    getCollectionAsync,
+} from "../services/api_client";
 import AddItemForm from "./add_item";
+import BackToAuthorisedBtn from "./buttons/back_to_authorised_btn";
 
 const CollectionDetails: React.FC = () => {
     const { collection_id } = useParams<{ collection_id: string }>();
@@ -15,7 +20,7 @@ const CollectionDetails: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             if (collection_id) {
-                let result = await getCollection(collection_id);
+                let result = await getCollectionAsync(collection_id);
 
                 if (result.data) {
                     setCollectionName(result.data.name);
@@ -31,7 +36,7 @@ const CollectionDetails: React.FC = () => {
                     console.error(result.error);
                 }
 
-                let fetchedItems = await getAllItems(collection_id);
+                let fetchedItems = await getAllItemsAsync(collection_id);
                 setItems(fetchedItems);
                 console.log(fetchedItems);
             }
@@ -60,7 +65,7 @@ const CollectionDetails: React.FC = () => {
                     {items.map((item: any, index: string) => (
                         <tr key={index}>
                             {tableHeaders.map((header) => (
-                                <td key={header}>{item[header]}</td>
+                                <td key={header}> {item[header]}</td>
                             ))}
                         </tr>
                     ))}
@@ -71,7 +76,7 @@ const CollectionDetails: React.FC = () => {
     const handleAddItem = (newItem: any) => {
         const fetchData = async () => {
             if (newItem && collection_id) {
-                let result = await createItem(newItem, collection_id);
+                let result = await createItemAsync(newItem, collection_id);
                 console.log(result);
             }
         };
@@ -92,11 +97,7 @@ const CollectionDetails: React.FC = () => {
             ) : (
                 <p>Loading...</p>
             )}
-            <div className="button-space">
-                <Link to="/authorised" className="btn btn-outline-secondary">
-                    Back
-                </Link>
-            </div>
+            <BackToAuthorisedBtn />
         </div>
     );
 };

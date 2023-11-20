@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import { createUser } from "../services/api_client";
+import { createUserAsync } from "../services/api_client";
 import { User } from "../dtos/user";
 import { CreateUserDto } from "../dtos/requests/create_user_dto";
 
@@ -28,7 +28,7 @@ function CreateUserComponent() {
         e.preventDefault();
         const newPerson = { ...form, status: "Active" };
 
-        const response = await createUser(newPerson);
+        const response = await createUserAsync(newPerson);
         setForm({
             username: "",
             email: "",
@@ -39,7 +39,7 @@ function CreateUserComponent() {
             window.alert(response.data?.message);
         }
 
-        if (response.data?.success) {
+        if (response.data) {
             localStorage.setItem("isAuthenticated", "true");
             localStorage.setItem("username", `${response.data.username}`);
             localStorage.setItem("userId", `${response.data.userId}`);

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
 import {
-    deleteCollection,
-    getCollection,
-    getCollectionId,
+    deleteCollectionAsync,
+    getCollectionAsync,
+    getCollectionByUserIdAsync,
 } from "../services/api_client";
 import { CollectionResponseDto } from "../dtos/responses/collection_response_dto";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,7 +19,7 @@ const UserCollections: React.FC = () => {
         const fetchCollections = async () => {
             let userId = localStorage.getItem("userId");
             if (userId) {
-                const collectionIds = await getCollectionId(userId);
+                const collectionIds = await getCollectionByUserIdAsync(userId);
                 if (collectionIds.data && Array.isArray(collectionIds.data)) {
                     const collectionIdArray = collectionIds.data.map(
                         (item) => item.collection_id
@@ -28,7 +28,7 @@ const UserCollections: React.FC = () => {
 
                     const fetchCollectionPromises = collectionIdArray.map(
                         async (collectionId) => {
-                            const collectionResponse = await getCollection(
+                            const collectionResponse = await getCollectionAsync(
                                 collectionId
                             );
                             return collectionResponse.data;
@@ -47,9 +47,7 @@ const UserCollections: React.FC = () => {
     }, []);
 
     const handleEditClick = (collectionId: string) => {
-        // Обработчик события для кнопки "Edit"
-        // Здесь вы можете вызвать соответствующий метод для редактирования коллекции
-        // collectionId - идентификатор коллекции
+        navigate(`/user/collection/${collectionId}`);
     };
 
     const handleDeleteClick = async (collectionId: string) => {
@@ -58,7 +56,7 @@ const UserCollections: React.FC = () => {
         );
 
         if (shouldDelete) {
-            await deleteCollection(collectionId);
+            await deleteCollectionAsync(collectionId);
             console.log("Deleting collection with ID:", collectionId);
 
             setCollections((prevCollections) =>
@@ -108,13 +106,13 @@ const UserCollections: React.FC = () => {
                     <span></span>
                 )}
             </div>
+            
             <button
                 className="btn btn-primary"
                 onClick={handleCreateNewCollection}
             >
                 +Create New Collection
             </button>
-            {/* <EditableTable></EditableTable> */}
         </div>
     );
 };

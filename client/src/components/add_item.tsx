@@ -58,7 +58,7 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ config, onAddItem }) => {
                 onClick={handleAddItem}
                 disabled={!isNameFilled}
             >
-                Добавить элемент
+                Add item
             </button>
         </div>
     );

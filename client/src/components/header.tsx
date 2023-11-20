@@ -1,10 +1,12 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
+        localStorage.clear();
+
         navigate("/");
     };
 
@@ -13,7 +15,10 @@ const Header: React.FC = () => {
             <div className="breadcrumb_custom">
                 <p className="breadcrumb_hello">
                     Hello,
-                    {localStorage.getItem("username")}!
+                    <Link to={`/user/${localStorage.getItem("userId")}`}>
+                        {localStorage.getItem("username")}
+                    </Link>
+                    !
                 </p>
                 <button className="btn btn-info" onClick={handleLogout}>
                     Log out

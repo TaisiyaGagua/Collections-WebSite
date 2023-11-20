@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { createCollection } from "../services/api_client";
+import { createCollectionAsync } from "../services/api_client";
 import { CreateCollectionDto } from "../dtos/requests/create_collection_dto";
 import { Link } from "react-router-dom";
+import BackToAuthorisedBtn from "./buttons/back_to_authorised_btn";
 
 interface TableRow {
     name: string;
@@ -48,7 +49,7 @@ const CreateCollection: React.FC = () => {
         if (canAddRow()) {
             const newRow: TableRow = {
                 name: "",
-                fieldType: "integer",
+                fieldType: "number",
                 fieldName: "",
             };
             setTableData([...tableData, newRow]);
@@ -80,8 +81,9 @@ const CreateCollection: React.FC = () => {
     };
     const saveTable = async () => {
         if (isNameFilled) {
-            const schema: { [key: string]: string } = {};
-            schema["name"] = "string";
+            const schema: { name: string; [key: string]: string } = {
+                name: "",
+            };
 
             tableData.forEach((row) => {
                 if (!isFieldEmpty(row.fieldName)) {
@@ -96,7 +98,9 @@ const CreateCollection: React.FC = () => {
                 config: JSON.stringify(schema),
             };
 
-            const response = await createCollection(collectionInfotoCreate);
+            const response = await createCollectionAsync(
+                collectionInfotoCreate
+            );
             console.log(
                 "ID новой коллекции:" + response.data?.collectionIdObjectId
             );
@@ -234,11 +238,7 @@ const CreateCollection: React.FC = () => {
                     Save Table
                 </button>
             </div>
-            <div className="button-space">
-                <Link to="/authorised" className="btn btn-outline-secondary">
-                    Back
-                </Link>
-            </div>
+            <BackToAuthorisedBtn />
         </div>
     );
 };
