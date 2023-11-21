@@ -23,10 +23,12 @@ const port = process.env.PORT || 5002;
 app.use(cors());
 app.use(express.json());
 
-app.listen(port, async () => {
-    await DataAccess.connect(process.env.ATLAS_URI!);
-    console.log(`Server is running on port: ${port}`);
+DataAccess.connect(process.env.ATLAS_URI!).then(() => {
+    app.listen(port, () => {
+        console.log(`Server is running on port: ${port}`);
+    });
 });
+
 app.get("/collections/largest", async (req, res) => {
     try {
         const limit = 5;
