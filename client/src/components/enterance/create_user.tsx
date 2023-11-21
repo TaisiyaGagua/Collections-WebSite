@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import { useNavigate } from "react-router";
-import { createUserAsync } from "../services/api_client";
-import { User } from "../dtos/user";
-import { CreateUserDto } from "../dtos/requests/create_user_dto";
+import { createUserAsync } from "../../services/api_client";
+import { CreateUserDto } from "../../dtos/requests/create_user_dto";
 
 export interface RegistrationFormData {
     username: string;
@@ -18,33 +17,41 @@ function CreateUserComponent() {
     });
     const navigate = useNavigate();
 
-    function updateForm(value: Partial<User>) {
+    function updateForm(value: Partial<CreateUserDto>) {
         setForm((prev) => {
             return { ...prev, ...value };
         });
     }
 
-    async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function onSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const newPerson = { ...form, status: "Active" };
 
-        const response = await createUserAsync(newPerson);
-        setForm({
-            username: "",
-            email: "",
-            password: "",
-        });
+        try {
+            const response = await createUserAsync(newPerson);
+            console.log(response);
 
-        if (response.error || response.data?.success === false) {
-            window.alert(response.data?.message);
-        }
+            setForm({
+                username: "",
+                email: "",
+                password: "",
+            });
 
-        if (response.data) {
-            localStorage.setItem("isAuthenticated", "true");
-            localStorage.setItem("username", `${response.data.username}`);
-            localStorage.setItem("userId", `${response.data.userId}`);
+            if (response.error || response.data === false) {
+                console.log(response.error);
+            }
 
-            navigate("/authorised");
+            if (response.data) {
+                const { _id } = response.data;
+                localStorage.setItem("isAuthenticated", "true");
+                localStorage.setItem("email", `${_id.email}`);
+                localStorage.setItem("userId", `${_id._id}`);
+                localStorage.setItem("username", `${_id.username}`);
+
+                navigate("/authorised");
+            }
+        } catch (error) {
+            console.error("Error during user creation:", error);
         }
     }
 

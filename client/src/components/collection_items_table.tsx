@@ -65,7 +65,17 @@ const CollectionDetails: React.FC = () => {
                     {items.map((item: any, index: string) => (
                         <tr key={index}>
                             {tableHeaders.map((header) => (
-                                <td key={header}> {item[header]}</td>
+                                <td key={header}>
+                                    {header === "name" ? (
+                                        <Link
+                                            to={`/collection/${collection_id}/item/${item.item_id}`}
+                                        >
+                                            {item[header]}
+                                        </Link>
+                                    ) : (
+                                        item[header]
+                                    )}
+                                </td>
                             ))}
                         </tr>
                     ))}
@@ -73,6 +83,7 @@ const CollectionDetails: React.FC = () => {
             </table>
         );
     };
+
     const handleAddItem = (newItem: any) => {
         const fetchData = async () => {
             if (newItem && collection_id) {

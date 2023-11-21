@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createCollectionAsync } from "../services/api_client";
 import { CreateCollectionDto } from "../dtos/requests/create_collection_dto";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BackToAuthorisedBtn from "./buttons/back_to_authorised_btn";
 
 interface TableRow {
@@ -21,6 +21,8 @@ const MAX_FIELDS_PER_TYPE = 3;
 
 const CreateCollection: React.FC = () => {
     const [tableData, setTableData] = useState<TableRow[]>([]);
+    const navigate = useNavigate();
+
     const [tableMetadata, setTableMetadata] = useState<TableMetadata>({
         name: "",
         description: "",
@@ -104,6 +106,8 @@ const CreateCollection: React.FC = () => {
             console.log(
                 "ID новой коллекции:" + response.data?.collectionIdObjectId
             );
+
+            navigate(`/collection/${response.data?.collectionIdObjectId}`);
         }
     };
     return (

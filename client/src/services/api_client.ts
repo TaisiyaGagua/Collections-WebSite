@@ -20,6 +20,52 @@ const headers: RawAxiosRequestHeaders | AxiosHeaders = {
     Accept: "application/json",
 };
 
+export async function getLargestCollectionsAsync(): Promise<
+    ApiResultWrapper<CollectionResponseDto[]>
+> {
+    const url = baseUrl + "/collections/largest";
+
+    try {
+        const response = await axios.get<CollectionResponseDto[]>(url);
+        const result: ApiResultWrapper<CollectionResponseDto[]> = {
+            data: response.data,
+            error: undefined,
+        };
+
+        return result;
+    } catch (error) {
+        const result: ApiResultWrapper<CollectionResponseDto[]> = {
+            data: undefined,
+            error: error as string,
+        };
+
+        return result;
+    }
+}
+
+export async function getLatestItemsAsync(): Promise<
+    ApiResultWrapper<ItemDto[]>
+> {
+    const url = baseUrl + "/latestItems";
+
+    try {
+        const response = await axios.get<ItemDto[]>(url);
+        const result: ApiResultWrapper<ItemDto[]> = {
+            data: response.data,
+            error: undefined,
+        };
+
+        return result;
+    } catch (error) {
+        const result: ApiResultWrapper<ItemDto[]> = {
+            data: undefined,
+            error: error as string,
+        };
+
+        return result;
+    }
+}
+
 export async function getUserAsync(
     userId: string
 ): Promise<ApiResultWrapper<UserResponseDto>> {
@@ -49,13 +95,13 @@ export async function getUserAsync(
 
 export async function createUserAsync(
     userToCreate: CreateUserDto
-): Promise<ApiResultWrapper<CheckUserResponse>> {
+): Promise<ApiResultWrapper<any>> {
     const url = baseUrl + "/" + config.addUserEndpoint;
 
     try {
         const response = await axios.post(url, userToCreate, { headers });
 
-        const result: ApiResultWrapper<CheckUserResponse> = {
+        const result: ApiResultWrapper<any> = {
             data: response.data,
             error: undefined,
         };
@@ -245,6 +291,7 @@ export async function updateCollectionAsync(
         return result;
     }
 }
+
 export async function deleteCollectionAsync(collectionId: string) {
     let url = baseUrl + "/" + config.deleteCollectionEndpoint;
     url = url.replace("{collectionId}", collectionId);
@@ -293,12 +340,68 @@ export async function getAllItemsAsync(
         return result;
     }
 }
+
+export async function getItemAsync(
+    collection_id: string,
+    item_id: string
+): Promise<ApiResultWrapper<ItemDto>> {
+    let url = baseUrl + "/" + config.getItemEndpoint;
+    url = url.replace("{collectionId}", collection_id);
+    url = url.replace("{itemId}", item_id);
+
+    try {
+        const response = await axios.get(url);
+
+        const result: ApiResultWrapper<ItemDto> = {
+            data: response.data,
+            error: undefined,
+        };
+
+        return result;
+    } catch (error) {
+        const result: ApiResultWrapper<any> = {
+            data: undefined,
+            error: error as string,
+        };
+
+        return result;
+    }
+}
+export async function updateItemAsync(
+    collectionId: string,
+    item_id: string,
+    payload: any
+): Promise<ApiResultWrapper<any>> {
+    let url = baseUrl + "/" + config.updateItemEndpoint;
+
+    url = url.replace("{collectionId}", collectionId);
+    url = url.replace("{itemId}", item_id);
+
+    try {
+        const response = await axios.put(url, payload, { headers });
+
+        const result: ApiResultWrapper<any> = {
+            data: response.data,
+            error: undefined,
+        };
+
+        return result;
+    } catch (error) {
+        const result: ApiResultWrapper<any> = {
+            data: undefined,
+            error: error as string,
+        };
+
+        return result;
+    }
+}
 export async function createItemAsync(
     ItemToCreate: ItemDto,
     collectionId: string
 ): Promise<ApiResultWrapper<CreateItemResponse>> {
     let url = baseUrl + "/" + config.addItemEndpoint;
     url = url.replace("{collectionId}", collectionId);
+
     try {
         const response = await axios.post(url, ItemToCreate, { headers });
 
@@ -310,6 +413,30 @@ export async function createItemAsync(
         return result;
     } catch (error) {
         const result: ApiResultWrapper<CreateItemResponse> = {
+            data: undefined,
+            error: error as string,
+        };
+
+        return result;
+    }
+}
+
+export async function deleteItemAsync(collectionId: string, itemId: string) {
+    let url = baseUrl + "/" + config.deleteItemEndpoint;
+    url = url.replace("{collectionId}", collectionId);
+    url = url.replace("{itemId}", itemId);
+
+    try {
+        const response = await axios.delete(url);
+
+        const result: ApiResultWrapper<any> = {
+            data: response.data,
+            error: undefined,
+        };
+
+        return result;
+    } catch (error) {
+        const result: ApiResultWrapper<any> = {
             data: undefined,
             error: error as string,
         };

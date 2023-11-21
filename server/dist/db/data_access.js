@@ -13,10 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const connectionString = "mongodb+srv://TaisiyaGagya:55470012yeS@cluster0.bunhab6.mongodb.net/?retryWrites=true&w=majority";
 class DataAccess {
     constructor() { }
-    static connect() {
+    static connect(connectionString) {
         return __awaiter(this, void 0, void 0, function* () {
             yield mongoose_1.default.connect(connectionString, {
                 connectTimeoutMS: 20000,

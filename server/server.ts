@@ -6,7 +6,9 @@ import { UserDto } from "./dtos/user/user_dto";
 import DataAccess from "./db/data_access";
 import { UserCollectionDto } from "./dtos/user_collection/user_collection_dto";
 import { CollectionItemDto } from "./dtos/collection_item/collection_item_dto";
-import CollectionItemSchema from "./models/collection_item";
+import CollectionItemSchema, {
+    ICollectionItem,
+} from "./models/collection_item";
 import CollectionSchema from "./models/collection";
 import UserCollectionSchema from "./models/user_collection";
 import RoleSchema from "./models/role";
@@ -25,7 +27,80 @@ app.listen(port, async () => {
     await DataAccess.connect(process.env.ATLAS_URI!);
     console.log(`Server is running on port: ${port}`);
 });
+app.get("/collections/largest", async (req, res) => {
+    try {
+        const limit = 5;
+        const collections: CollectionItemDto[] =
+            await CollectionItemSchema.aggregate([
+                {
+                    $project: {
+                        length: {
+                            $size: {
+                                $ifNull: ["$items", []],
+                            },
+                        },
+                        document: "$$ROOT",
+                    },
+                },
+                {
+                    $sort: { length: -1 },
+                },
+                {
+                    $limit: limit,
+                },
+                {
+                    $replaceRoot: { newRoot: "$document" },
+                },
+            ]);
 
+        const collectionDetails = [];
+
+        for (const collection of collections) {
+            const collectionId = collection.collection_id;
+            const collectionInfo = await CollectionSchema.findById(
+                collectionId
+            );
+            if (collectionInfo) {
+                collectionDetails.push(collectionInfo);
+            }
+        }
+
+        res.json(collectionDetails);
+    } catch (error) {
+        console.error("Ошибка при поиске коллекций:", error);
+        res.status(500).json({
+            error: "Произошла ошибка при поиске коллекций.",
+        });
+    }
+});
+app.get("/latestItems", async (req, res) => {
+    try {
+        const items = await CollectionItemSchema.aggregate([
+            {
+                $unwind: "$items",
+            },
+            {
+                $sort: { "items.createdAt": -1 },
+            },
+            {
+                $limit: 5,
+            },
+            {
+                $project: {
+                    _id: 0,
+                    item: "$items",
+                },
+            },
+        ]);
+
+        res.json(items);
+    } catch (error) {
+        console.error("Ошибка при поиске последних элементов:", error);
+        res.status(500).json({
+            error: "Произошла ошибка при поиске последних элементов.",
+        });
+    }
+});
 app.post("/users", async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -176,13 +251,18 @@ app.get("/collections/:collection_id/:item_id", async (req, res) => {
         });
 
         if (item) {
-            const filteredItems = item.items.filter(
-                (item: { item_id: ObjectId }) =>
-                    item.item_id.equals(new ObjectId(itemId))
+            const foundItem = item.items.find(
+                (item: { item_id: any }) =>
+                    String(item.item_id) === String(itemId)
             );
-            res.json(filteredItems);
+
+            if (foundItem) {
+                res.json(foundItem);
+            } else {
+                res.status(404).json({ error: "Элемент не найден" });
+            }
         } else {
-            res.status(404).json({ error: "Config не найден" });
+            res.status(404).json({ error: "Коллекция не найдена" });
         }
     } catch (err) {
         console.error(err);
@@ -313,8 +393,7 @@ app.put("/collections/:collection_id/:item_id", async (req, res) => {
         }
 
         const itemIndex = collection.items.findIndex(
-            (item: { item_id: ObjectId }) =>
-                item.item_id.equals(new ObjectId(itemId))
+            (item: { item_id: any }) => String(item.item_id) === String(itemId)
         );
 
         if (itemIndex === -1) {
@@ -394,8 +473,7 @@ app.delete("/collections/:collection_id/:item_id", async (req, res) => {
             return res.status(404).json({ error: "Collection not found" });
         }
         const itemIndex = collection.items.findIndex(
-            (item: { item_id: ObjectId }) =>
-                item.item_id.equals(new ObjectId(itemId))
+            (item: { item_id: any }) => String(item.item_id) === String(itemId)
         );
         if (itemIndex === -1) {
             return res.status(404).json({ error: "Элемент не найден" });

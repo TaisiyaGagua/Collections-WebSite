@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { CollectionResponseDto } from "../../dtos/responses/collection_response_dto";
@@ -13,31 +13,26 @@ interface TableRow {
 const MAX_TOTAL_ROWS = 15;
 const MAX_FIELDS_PER_TYPE = 3;
 
-export const AddExtraFields = () => {
+const AddExtraFields: React.FC = () => {
     const dispatch = useDispatch();
-
-    const [tableData, setTableData] = useState<TableRow[]>([]);
-    const [showInputGroup, setShowInputGroup] = useState(true);
-    const [isNewFieldAdded, setNewFieldAdded] = useState(false);
-    const countTotalRows = (): number => {
-        return tableData.length;
-    };
     const { collection_id } = useParams<{ collection_id: string }>();
     const currentCollectionState = useSelector(
         (state: any) => state.editCollectionState
     );
 
-    const countFieldsOfType = (fieldType: string): number => {
-        return tableData.filter((row) => row.fieldType === fieldType).length;
-    };
+    const [tableData, setTableData] = useState<TableRow[]>([]);
+    const [showInputGroup, setShowInputGroup] = useState(true);
+    const [isNewFieldAdded, setNewFieldAdded] = useState(false);
 
-    const canAddRow = (): boolean => {
-        return countTotalRows() < MAX_TOTAL_ROWS;
-    };
+    const countTotalRows = (): number => tableData.length;
 
-    const canAddFieldOfType = (fieldType: string): boolean => {
-        return countFieldsOfType(fieldType) < MAX_FIELDS_PER_TYPE;
-    };
+    const countFieldsOfType = (fieldType: string): number =>
+        tableData.filter((row) => row.fieldType === fieldType).length;
+
+    const canAddRow = (): boolean => countTotalRows() < MAX_TOTAL_ROWS;
+
+    const canAddFieldOfType = (fieldType: string): boolean =>
+        countFieldsOfType(fieldType) < MAX_FIELDS_PER_TYPE;
 
     const addRow = () => {
         if (canAddRow()) {
@@ -77,7 +72,9 @@ export const AddExtraFields = () => {
                 schema[row.fieldName] = row.fieldType;
             }
         });
+
         const updatedConfig = { ...config, ...schema };
+
         if (collection_id) {
             const collectionInfoToUpdate: CollectionResponseDto = {
                 _id: collection_id,
@@ -93,6 +90,7 @@ export const AddExtraFields = () => {
             setTableData([]);
         }
     };
+
     return (
         <>
             <table className="extra-field-table">
@@ -120,46 +118,24 @@ export const AddExtraFields = () => {
                                             )
                                         }
                                     >
-                                        <option
-                                            value="number"
-                                            disabled={
-                                                !canAddFieldOfType("number")
-                                            }
-                                        >
-                                            Number
-                                        </option>
-                                        <option
-                                            value="string"
-                                            disabled={
-                                                !canAddFieldOfType("string")
-                                            }
-                                        >
-                                            String
-                                        </option>
-                                        <option
-                                            value="text"
-                                            disabled={
-                                                !canAddFieldOfType("text")
-                                            }
-                                        >
-                                            Text
-                                        </option>
-                                        <option
-                                            value="boolean"
-                                            disabled={
-                                                !canAddFieldOfType("boolean")
-                                            }
-                                        >
-                                            Boolean
-                                        </option>
-                                        <option
-                                            value="date"
-                                            disabled={
-                                                !canAddFieldOfType("date")
-                                            }
-                                        >
-                                            Date
-                                        </option>
+                                        {[
+                                            "number",
+                                            "string",
+                                            "text",
+                                            "boolean",
+                                            "date",
+                                        ].map((type) => (
+                                            <option
+                                                key={type}
+                                                value={type}
+                                                disabled={
+                                                    !canAddFieldOfType(type)
+                                                }
+                                            >
+                                                {type.charAt(0).toUpperCase() +
+                                                    type.slice(1)}
+                                            </option>
+                                        ))}
                                     </select>
                                 </td>
                                 <td>
@@ -203,7 +179,7 @@ export const AddExtraFields = () => {
                 <button
                     className="btn btn-primary"
                     onClick={saveField}
-                    disabled={!addRow}
+                    disabled={!canAddRow()}
                 >
                     Save extra-field
                 </button>
@@ -211,3 +187,5 @@ export const AddExtraFields = () => {
         </>
     );
 };
+
+export default AddExtraFields;

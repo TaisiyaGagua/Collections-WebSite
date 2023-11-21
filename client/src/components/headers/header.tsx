@@ -1,17 +1,18 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ColorModeToggler from "../dark_theme";
 
 const Header: React.FC = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
         localStorage.clear();
-
-        navigate("/");
+        navigate("/main");
     };
 
     return (
         <header>
+            <ColorModeToggler></ColorModeToggler>
             <div className="breadcrumb_custom">
                 <p className="breadcrumb_hello">
                     Hello,

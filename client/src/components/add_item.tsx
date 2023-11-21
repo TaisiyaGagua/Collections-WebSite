@@ -14,7 +14,8 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ config, onAddItem }) => {
     };
 
     const handleAddItem = () => {
-        onAddItem(newItem);
+        const createdAt = new Date();
+        onAddItem({ ...newItem, createdAt });
         setNewItem({});
     };
 

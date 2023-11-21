@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { checkUserAsync } from "../services/api_client";
-import { CheckUserDto } from "../dtos/requests/check_user_dto";
+import { checkUserAsync } from "../../services/api_client";
+import { CheckUserDto } from "../../dtos/requests/check_user_dto";
 
 const Auth: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -21,9 +21,7 @@ const Auth: React.FC = () => {
                 localStorage.setItem("isAuthenticated", "true");
                 localStorage.setItem("username", `${response.data.username}`);
                 localStorage.setItem("email", `${response.data.email}`);
-
                 localStorage.setItem("userId", `${response.data.userId}`);
-
                 navigate("/authorised");
             }
         } catch (error) {

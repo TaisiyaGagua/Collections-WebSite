@@ -23,13 +23,82 @@ const role_1 = __importDefault(require("./models/role"));
 const user_role_1 = __importDefault(require("./models/user_role"));
 const app = (0, express_1.default)();
 const cors = require("cors");
-require("dotenv").config({ path: "./config.env" });
+require("dotenv").config({ path: "./.env" });
 const port = process.env.PORT || 5002;
 app.use(cors());
 app.use(express_1.default.json());
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
-    yield data_access_1.default.connect();
+    yield data_access_1.default.connect(process.env.ATLAS_URI);
     console.log(`Server is running on port: ${port}`);
+}));
+app.get("/collections/largest", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const limit = 5;
+        const collections = yield collection_item_1.default.aggregate([
+            {
+                $project: {
+                    length: {
+                        $size: {
+                            $ifNull: ["$items", []],
+                        },
+                    },
+                    document: "$$ROOT",
+                },
+            },
+            {
+                $sort: { length: -1 },
+            },
+            {
+                $limit: limit,
+            },
+            {
+                $replaceRoot: { newRoot: "$document" },
+            },
+        ]);
+        const collectionDetails = [];
+        for (const collection of collections) {
+            const collectionId = collection.collection_id;
+            const collectionInfo = yield collection_1.default.findById(collectionId);
+            if (collectionInfo) {
+                collectionDetails.push(collectionInfo);
+            }
+        }
+        res.json(collectionDetails);
+    }
+    catch (error) {
+        console.error("Ошибка при поиске коллекций:", error);
+        res.status(500).json({
+            error: "Произошла ошибка при поиске коллекций.",
+        });
+    }
+}));
+app.get("/latestItems", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const items = yield collection_item_1.default.aggregate([
+            {
+                $unwind: "$items",
+            },
+            {
+                $sort: { "items.createdAt": -1 },
+            },
+            {
+                $limit: 5,
+            },
+            {
+                $project: {
+                    _id: 0,
+                    item: "$items",
+                },
+            },
+        ]);
+        res.json(items);
+    }
+    catch (error) {
+        console.error("Ошибка при поиске последних элементов:", error);
+        res.status(500).json({
+            error: "Произошла ошибка при поиске последних элементов.",
+        });
+    }
 }));
 app.post("/users", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -74,6 +143,7 @@ app.post("/password", (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 success: true,
                 message: "Login successful",
                 username: found.username,
+                email: found.email,
                 userId: found.id,
             });
         }
@@ -165,11 +235,16 @@ app.get("/collections/:collection_id/:item_id", (req, res) => __awaiter(void 0, 
             collection_id: collectionId,
         });
         if (item) {
-            const filteredItems = item.items.filter((item) => item.item_id.equals(new mongodb_1.ObjectId(itemId)));
-            res.json(filteredItems);
+            const foundItem = item.items.find((item) => String(item.item_id) === String(itemId));
+            if (foundItem) {
+                res.json(foundItem);
+            }
+            else {
+                res.status(404).json({ error: "Элемент не найден" });
+            }
         }
         else {
-            res.status(404).json({ error: "Config не найден" });
+            res.status(404).json({ error: "Коллекция не найдена" });
         }
     }
     catch (err) {
@@ -282,7 +357,7 @@ app.put("/collections/:collection_id/:item_id", (req, res) => __awaiter(void 0, 
         if (!collection) {
             return res.status(404).json({ error: "Collection not found" });
         }
-        const itemIndex = collection.items.findIndex((item) => item.item_id.equals(new mongodb_1.ObjectId(itemId)));
+        const itemIndex = collection.items.findIndex((item) => String(item.item_id) === String(itemId));
         if (itemIndex === -1) {
             return res.status(404).json({ error: "Item not found" });
         }
@@ -346,7 +421,7 @@ app.delete("/collections/:collection_id/:item_id", (req, res) => __awaiter(void 
         if (!collection) {
             return res.status(404).json({ error: "Collection not found" });
         }
-        const itemIndex = collection.items.findIndex((item) => item.item_id.equals(new mongodb_1.ObjectId(itemId)));
+        const itemIndex = collection.items.findIndex((item) => String(item.item_id) === String(itemId));
         if (itemIndex === -1) {
             return res.status(404).json({ error: "Элемент не найден" });
         }

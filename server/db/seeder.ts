@@ -29,6 +29,7 @@ async function seedDatabase() {
             const username = faker.internet.userName();
             const email = faker.internet.email();
             const password = faker.internet.password();
+            
 
             usersToInsert.push({ username, email, password });
         }

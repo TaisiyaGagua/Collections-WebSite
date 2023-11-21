@@ -11,7 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const faker_1 = require("@faker-js/faker");
 const MongoClient = require("mongodb").MongoClient;
-const mongoURI = "mongodb+srv://TaisiyaGagya:55470012yeS@cluster0.bunhab6.mongodb.net/?retryWrites=true&w=majority";
+require("dotenv").config({ path: "../.env" });
+const mongoURI = process.env.ATLAS_URI;
 function seedDatabase() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
