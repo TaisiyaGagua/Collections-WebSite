@@ -7,7 +7,7 @@ const Header: React.FC = () => {
 
     const handleLogout = () => {
         localStorage.clear();
-        navigate("/main");
+        navigate("/");
     };
 
     return (

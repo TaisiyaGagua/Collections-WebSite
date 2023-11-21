@@ -55,7 +55,7 @@ const App: React.FC = () => {
             <Router>
                 <Routes>
                     <Route
-                        path="/main"
+                        path="/"
                         element={
                             <div>
                                 <div className="header_custom">
