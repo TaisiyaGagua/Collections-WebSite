@@ -489,3 +489,7 @@ app.delete("/collections/:collection_id/:item_id", async (req, res) => {
         res.status(500).json({ error: "Ошибка при удалении данных" });
     }
 });
+
+app.get("/health", async (req, res) => {
+    return res.json({ status: "ok" });
+});
