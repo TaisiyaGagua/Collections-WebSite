@@ -11,9 +11,9 @@ const AccountSettings: React.FC = () => {
     return (
         <div>
             <h2>Account Settings</h2>
-            <ChangeUsername></ChangeUsername>
-            <ChangeEmail></ChangeEmail>
-            <ChangePassword></ChangePassword>
+            <ChangeUsername />
+            <ChangeEmail />
+            <ChangePassword />
             <DeleteAccount userId={userId}></DeleteAccount>
             <BackToAuthorisedBtn />
         </div>

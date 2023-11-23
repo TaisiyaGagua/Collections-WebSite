@@ -291,6 +291,32 @@ export async function updateCollectionAsync(
         return result;
     }
 }
+export async function updateCollectionConfigAsync(
+    collectionId: string,
+    payload: any
+): Promise<ApiResultWrapper<UpdateCollectionDto>> {
+    let url = baseUrl + "/" + config.updateCollectionConfigEndpoint;
+
+    url = url.replace("{collectionId}", collectionId);
+
+    try {
+        const response = await axios.put(url, payload, { headers });
+
+        const result: ApiResultWrapper<UpdateCollectionDto> = {
+            data: response.data,
+            error: undefined,
+        };
+
+        return result;
+    } catch (error) {
+        const result: ApiResultWrapper<UpdateCollectionDto> = {
+            data: undefined,
+            error: error as string,
+        };
+
+        return result;
+    }
+}
 
 export async function deleteCollectionAsync(collectionId: string) {
     let url = baseUrl + "/" + config.deleteCollectionEndpoint;
@@ -367,6 +393,7 @@ export async function getItemAsync(
         return result;
     }
 }
+
 export async function updateItemAsync(
     collectionId: string,
     item_id: string,
@@ -395,6 +422,7 @@ export async function updateItemAsync(
         return result;
     }
 }
+
 export async function createItemAsync(
     ItemToCreate: ItemDto,
     collectionId: string

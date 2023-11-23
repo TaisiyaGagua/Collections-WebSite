@@ -1,8 +1,9 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCollectionRequest } from "../../state/edit_collection_state";
 import { CollectionResponseDto } from "../../dtos/responses/collection_response_dto";
+import { updateCollectionConfigAsync } from "../../services/api_client";
 
 interface TableRow {
     [key: string]: string;
@@ -12,6 +13,7 @@ export const EditCollectionConfig: React.FC = () => {
     const { collection_id } = useParams<{ collection_id: string }>();
     const [editingHeader, setEditingHeader] = useState<string | null>(null);
     const [newConfig, setNewConfig] = useState<TableRow | null>({});
+    const [newKeyConfid, setNewKey] = useState<string | null>();
 
     const currentCollectionState = useSelector(
         (state: any) => state.editCollectionState
@@ -34,7 +36,7 @@ export const EditCollectionConfig: React.FC = () => {
         const objCopy = { ...config };
         delete objCopy[oldKey];
         objCopy[newKey as keyof TableRow] = value;
-
+        setNewKey(newKey);
         setNewConfig(objCopy);
     };
 
@@ -46,6 +48,10 @@ export const EditCollectionConfig: React.FC = () => {
                 description: currentCollectionState.description,
                 config: JSON.stringify(newConfig),
             };
+            await updateCollectionConfigAsync(collection_id, {
+                oldKey: editingHeader,
+                newKey: newKeyConfid,
+            });
 
             dispatch(updateCollectionRequest(collectionInfoToUpdate));
             console.log("Collection updated successfully!");

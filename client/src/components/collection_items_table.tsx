@@ -28,17 +28,12 @@ const CollectionDetails: React.FC = () => {
                     if (result.data.config) {
                         let parsedConfig = JSON.parse(result.data.config);
                         setConfig(parsedConfig);
-                        console.log(parsedConfig);
                     }
-
-                    console.log(result);
                 } else {
                     console.error(result.error);
                 }
-
                 let fetchedItems = await getAllItemsAsync(collection_id);
                 setItems(fetchedItems);
-                console.log(fetchedItems);
             }
         };
 

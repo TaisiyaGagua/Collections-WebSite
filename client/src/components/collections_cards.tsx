@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-
 import {
     deleteCollectionAsync,
     getCollectionAsync,
@@ -24,8 +23,6 @@ const UserCollections: React.FC = () => {
                     const collectionIdArray = collectionIds.data.map(
                         (item) => item.collection_id
                     );
-                    console.log(collectionIdArray);
-
                     const fetchCollectionPromises = collectionIdArray.map(
                         async (collectionId) => {
                             const collectionResponse = await getCollectionAsync(
@@ -34,11 +31,9 @@ const UserCollections: React.FC = () => {
                             return collectionResponse.data;
                         }
                     );
-
                     const collectionData: any = await Promise.all(
                         fetchCollectionPromises
                     );
-
                     setCollections(collectionData);
                 }
             }
@@ -57,8 +52,6 @@ const UserCollections: React.FC = () => {
 
         if (shouldDelete) {
             await deleteCollectionAsync(collectionId);
-            console.log("Deleting collection with ID:", collectionId);
-
             setCollections((prevCollections) =>
                 prevCollections.filter((c) => c._id !== collectionId)
             );
@@ -106,7 +99,7 @@ const UserCollections: React.FC = () => {
                     <span></span>
                 )}
             </div>
-            
+
             <button
                 className="btn btn-primary"
                 onClick={handleCreateNewCollection}

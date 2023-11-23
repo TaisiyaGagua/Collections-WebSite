@@ -21,7 +21,7 @@ async function seedDatabase() {
 
         for (const collectionName of collectionNames) {
             await db.createCollection(collectionName);
-            console.log(`Коллекция "${collectionName}" успешно создана`);
+            console.log(`Collection "${collectionName}" created`);
         }
 
         const usersToInsert = [];
@@ -74,11 +74,11 @@ async function seedDatabase() {
             .collection("user_role")
             .insertMany([...userRolePairs, tayaUserRolePair]);
 
-        console.log("Данные успешно добавлены в базу данных");
+        console.log("Success");
 
         client.close();
     } catch (error) {
-        console.error("Ошибка при добавлении данных:", error);
+        console.error("Error", error);
     }
 }
 

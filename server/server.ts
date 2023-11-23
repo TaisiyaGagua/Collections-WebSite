@@ -69,9 +69,9 @@ app.get("/collections/largest", async (req, res) => {
 
         res.json(collectionDetails);
     } catch (error) {
-        console.error("Ошибка при поиске коллекций:", error);
+        console.error("Cannot find collection:", error);
         res.status(500).json({
-            error: "Произошла ошибка при поиске коллекций.",
+            error: "Internal server error",
         });
     }
 });
@@ -97,9 +97,9 @@ app.get("/latestItems", async (req, res) => {
 
         res.json(items);
     } catch (error) {
-        console.error("Ошибка при поиске последних элементов:", error);
+        console.error("Cannot find items:", error);
         res.status(500).json({
-            error: "Произошла ошибка при поиске последних элементов.",
+            error: "Internal server error",
         });
     }
 });
@@ -113,7 +113,7 @@ app.post("/users", async (req, res) => {
         newUser.email = email;
         newUser.password = password;
         let result = await UserSchema.create(newUser);
-        console.log("ID нового пользователя:", result);
+        console.log("ID new user:", result);
         const userRole = await RoleSchema.findOne({ name: "user" });
 
         if (!userRole) {
@@ -129,9 +129,9 @@ app.post("/users", async (req, res) => {
             res.status(201).json({ _id: result });
         }
     } catch (error) {
-        console.error("Ошибка при добавлении пользователя:", error);
+        console.error("Cannot add new user", error);
         res.status(500).json({
-            error: "Произошла ошибка при добавлении пользователя.",
+            error: "Internal server error",
         });
     }
 });
@@ -165,7 +165,7 @@ app.post("/collections", async (req, res) => {
         newCollection.config = config;
         newCollection.description = description;
         let result = await CollectionSchema.create(newCollection);
-        console.log("ID новой коллекции:", result.id);
+        console.log("ID new collection:", result.id);
 
         const collectionIdObjectId = result._id;
         const userCollectionPairs = {} as UserCollectionDto;
@@ -179,9 +179,9 @@ app.post("/collections", async (req, res) => {
 
         res.status(201).json({ collectionIdObjectId });
     } catch (error) {
-        console.error("Ошибка при добавлении коллекции:", error);
+        console.error("Cannot add new collection:", error);
         res.status(500).json({
-            error: "Произошла ошибка при добавлении коллекции.",
+            error: "Internal server error",
         });
     }
 });
@@ -219,11 +219,11 @@ app.get("/:user_id/collection", async (req, res) => {
         if (collection) {
             res.json(collection);
         } else {
-            res.status(404).json({ error: "Config не найден" });
+            res.status(404).json({ error: "Collection not found" });
         }
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -235,11 +235,11 @@ app.get("/collections/:collection_id", async (req, res) => {
         if (collection) {
             res.json(collection);
         } else {
-            res.status(404).json({ error: "Config не найден" });
+            res.status(404).json({ error: "Config not found" });
         }
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -261,14 +261,14 @@ app.get("/collections/:collection_id/:item_id", async (req, res) => {
             if (foundItem) {
                 res.json(foundItem);
             } else {
-                res.status(404).json({ error: "Элемент не найден" });
+                res.status(404).json({ error: "Item not found" });
             }
         } else {
-            res.status(404).json({ error: "Коллекция не найдена" });
+            res.status(404).json({ error: "Collection not found" });
         }
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -283,11 +283,11 @@ app.get("/collection/:collection_id/items", async (req, res) => {
         if (items) {
             res.json(items);
         } else {
-            res.status(404).json({ error: "Config не найден" });
+            res.status(404).json({ error: "Items not found" });
         }
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -301,11 +301,11 @@ app.get("/users/:user_id", async (req, res) => {
         if (user) {
             res.json(user);
         } else {
-            res.status(404).json({ error: "user не найден" });
+            res.status(404).json({ error: "User not found" });
         }
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -322,9 +322,7 @@ app.put("/users/:user_id", async (req, res) => {
         }
 
         if (Object.keys(updateFields).length === 0) {
-            return res
-                .status(400)
-                .json({ message: "Не переданы данные для обновления" });
+            return res.status(400).json({ message: "No data to update" });
         }
 
         const user = await UserSchema.updateOne(
@@ -333,14 +331,14 @@ app.put("/users/:user_id", async (req, res) => {
         );
 
         if (user) {
-            res.status(200).json({ message: "Пользователь успешно обновлен" });
+            res.status(200).json({ message: "User successesfully updated" });
         } else {
-            res.status(404).json({ message: "Пользователь не найден" });
+            res.status(404).json({ message: "User not found" });
         }
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Произошла ошибка при обновлении пользователя",
+            message: "Internal server error",
         });
     }
 });
@@ -370,12 +368,12 @@ app.put("/collections/:collection_id", async (req, res) => {
         if (updatedCollection) {
             res.json(updatedCollection);
         } else {
-            res.status(404).json({ error: "Коллекция не найдена" });
+            res.status(404).json({ error: "Collection not found" });
         }
     } catch (error) {
-        console.error("Ошибка при обновлении коллекции:", error);
+        console.error("Cannot update collection", error);
         res.status(500).json({
-            error: "Произошла ошибка при обновлении коллекции.",
+            error: "Internal server error",
         });
     }
 });
@@ -416,6 +414,51 @@ app.put("/collections/:collection_id/:item_id", async (req, res) => {
     }
 });
 
+app.put("/config/collections/:collection_id/", async (req, res) => {
+    try {
+        const collectionId = req.params.collection_id;
+
+        const oldKey: string = req.body.oldKey;
+        const newKey: string = req.body.newKey;
+
+        const existingCollection = await CollectionItemSchema.findOne({
+            collection_id: collectionId,
+        });
+
+        if (!existingCollection) {
+            return res.status(404).json({ error: "Collection not found" });
+        }
+        const updatedItems = existingCollection.items.map((currentItem) => {
+            if (oldKey in currentItem) {
+                currentItem[newKey] = currentItem[oldKey];
+                delete currentItem[oldKey];
+            }
+            return currentItem;
+        });
+
+        const updatedCollection = await CollectionItemSchema.findOneAndUpdate(
+            {
+                collection_id: collectionId,
+            },
+            {
+                $set: {
+                    items: updatedItems,
+                },
+            },
+
+            { new: true }
+        );
+        if (updatedCollection) {
+            res.json(updatedCollection);
+        } else {
+            res.status(404).json({ error: "Collection not found" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 app.delete("/users/:user_id", async (req, res) => {
     try {
         const userID = req.params.user_id;
@@ -435,7 +478,7 @@ app.delete("/users/:user_id", async (req, res) => {
         res.json(deletedUser);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при удалении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -454,11 +497,11 @@ app.delete("/collections/:collection_id", async (req, res) => {
         });
 
         res.json(deletedCollection);
-        console.log("Коллекция удалена");
+        console.log("Collection deleted");
     } catch (error) {
-        console.error("Ошибка при обновлении коллекции:", error);
+        console.error("Cannot delete collection", error);
         res.status(500).json({
-            error: "Произошла ошибка при обновлении коллекции.",
+            error: "Internal server error",
         });
     }
 });
@@ -478,17 +521,17 @@ app.delete("/collections/:collection_id/:item_id", async (req, res) => {
             (item: { item_id: any }) => String(item.item_id) === String(itemId)
         );
         if (itemIndex === -1) {
-            return res.status(404).json({ error: "Элемент не найден" });
+            return res.status(404).json({ error: "Item not found" });
         }
 
         collection.items.splice(itemIndex, 1);
 
         await collection.save();
 
-        res.json({ message: "Элемент успешно удален" });
+        res.json({ message: "Item deleted" });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при удалении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 

@@ -17,8 +17,6 @@ interface TableMetadata {
 
 const MAX_TOTAL_ROWS = 15;
 
-const MAX_FIELDS_PER_TYPE = 3;
-
 const CreateCollection: React.FC = () => {
     const [tableData, setTableData] = useState<TableRow[]>([]);
     const navigate = useNavigate();
@@ -32,17 +30,11 @@ const CreateCollection: React.FC = () => {
     const countTotalRows = (): number => {
         return tableData.length;
     };
-    const countFieldsOfType = (fieldType: string): number => {
-        return tableData.filter((row) => row.fieldType === fieldType).length;
-    };
 
     const canAddRow = (): boolean => {
         return countTotalRows() < MAX_TOTAL_ROWS;
     };
 
-    const canAddFieldOfType = (fieldType: string): boolean => {
-        return countFieldsOfType(fieldType) < MAX_FIELDS_PER_TYPE;
-    };
     const isFieldEmpty = (value: string): boolean => {
         return value.trim() === "";
     };
@@ -104,7 +96,7 @@ const CreateCollection: React.FC = () => {
                 collectionInfotoCreate
             );
             console.log(
-                "ID новой коллекции:" + response.data?.collectionIdObjectId
+                "ID new collection" + response.data?.collectionIdObjectId
             );
 
             navigate(`/collection/${response.data?.collectionIdObjectId}`);
@@ -163,36 +155,11 @@ const CreateCollection: React.FC = () => {
                                         )
                                     }
                                 >
-                                    <option
-                                        value="number"
-                                        disabled={!canAddFieldOfType("number")}
-                                    >
-                                        Number
-                                    </option>
-                                    <option
-                                        value="string"
-                                        disabled={!canAddFieldOfType("string")}
-                                    >
-                                        String
-                                    </option>
-                                    <option
-                                        value="text"
-                                        disabled={!canAddFieldOfType("text")}
-                                    >
-                                        Text
-                                    </option>
-                                    <option
-                                        value="boolean"
-                                        disabled={!canAddFieldOfType("boolean")}
-                                    >
-                                        Boolean
-                                    </option>
-                                    <option
-                                        value="date"
-                                        disabled={!canAddFieldOfType("date")}
-                                    >
-                                        Date
-                                    </option>
+                                    <option value="number">Number</option>
+                                    <option value="string">String</option>
+                                    <option value="text">Text</option>
+                                    <option value="boolean">Boolean</option>
+                                    <option value="date">Date</option>
                                 </select>
                             </td>
                             <td>

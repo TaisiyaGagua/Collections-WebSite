@@ -29,7 +29,6 @@ function CreateUserComponent() {
 
         try {
             const response = await createUserAsync(newPerson);
-            console.log(response);
 
             setForm({
                 username: "",

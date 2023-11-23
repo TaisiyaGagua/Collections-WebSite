@@ -91,7 +91,8 @@ const ItemDetails: React.FC = () => {
                 <div>
                     {Object.entries(itemDetails).map(
                         ([key, value]) =>
-                            key !== "item_id" && (
+                            key !== "item_id" &&
+                            key !== "CreatedAt" && (
                                 <div key={key} className="input-group">
                                     <input
                                         type="text"

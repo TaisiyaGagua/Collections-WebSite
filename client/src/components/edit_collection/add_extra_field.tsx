@@ -11,7 +11,6 @@ interface TableRow {
 }
 
 const MAX_TOTAL_ROWS = 15;
-const MAX_FIELDS_PER_TYPE = 3;
 
 const AddExtraFields: React.FC = () => {
     const dispatch = useDispatch();
@@ -26,13 +25,7 @@ const AddExtraFields: React.FC = () => {
 
     const countTotalRows = (): number => tableData.length;
 
-    const countFieldsOfType = (fieldType: string): number =>
-        tableData.filter((row) => row.fieldType === fieldType).length;
-
     const canAddRow = (): boolean => countTotalRows() < MAX_TOTAL_ROWS;
-
-    const canAddFieldOfType = (fieldType: string): boolean =>
-        countFieldsOfType(fieldType) < MAX_FIELDS_PER_TYPE;
 
     const addRow = () => {
         if (canAddRow()) {
@@ -125,13 +118,7 @@ const AddExtraFields: React.FC = () => {
                                             "boolean",
                                             "date",
                                         ].map((type) => (
-                                            <option
-                                                key={type}
-                                                value={type}
-                                                disabled={
-                                                    !canAddFieldOfType(type)
-                                                }
-                                            >
+                                            <option key={type} value={type}>
                                                 {type.charAt(0).toUpperCase() +
                                                     type.slice(1)}
                                             </option>

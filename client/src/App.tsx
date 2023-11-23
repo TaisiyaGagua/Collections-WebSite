@@ -3,7 +3,6 @@ import "./custom.css";
 import CreateCollection from "./components/add_collection";
 import UserCollections from "./components/collections_cards";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import Header from "./components/headers/header";
 import CollectionDetails from "./components/collection_items_table";
 import AccountSettings from "./components/edit_user/user_settings";
 import EditCollection from "./components/edit_collection/collection_edit";
@@ -16,7 +15,8 @@ import { ItemDto } from "./dtos/requests/create_item_dto";
 import { ApiResultWrapper } from "./common/api_result_wrapper";
 import { CollectionResponseDto } from "./dtos/responses/collection_response_dto";
 import AuthenticationContainer from "./components/enterance/enterance";
-import HeaderUnauthenticated from "./components/headers/header_unauthenticated";
+import Header from "./components/headers/header";
+import GuestCollectionTable from "./components/collection_items";
 
 const App: React.FC = () => {
     localStorage.setItem("isAuthenticated", "false");
@@ -29,6 +29,7 @@ const App: React.FC = () => {
     const [largestCollections, setLargestCollections] = useState<
         ApiResultWrapper<CollectionResponseDto[]>
     >({ data: undefined, error: undefined });
+
     useEffect(() => {
         const fetchData = async () => {
             const latestItemsResult = await getLatestItemsAsync();
@@ -36,7 +37,6 @@ const App: React.FC = () => {
 
             setLatestItems(latestItemsResult);
             setLargestCollections(largestCollectionsResult);
-            console.log(largestCollectionsResult);
         };
 
         fetchData();
@@ -59,15 +59,15 @@ const App: React.FC = () => {
                         element={
                             <div>
                                 <div className="header_custom">
-                                    <HeaderUnauthenticated></HeaderUnauthenticated>
+                                    <Header isAuthenticated={false} />
                                 </div>
 
                                 <div>
                                     <h2>Latest Items</h2>
                                     <ul>
                                         {latestItems.data.map(
-                                            (itemData: any) => (
-                                                <li key={itemData.item.item_id}>
+                                            (itemData: any, i) => (
+                                                <li key={i}>
                                                     {itemData.item.name}
                                                 </li>
                                             )
@@ -77,14 +77,10 @@ const App: React.FC = () => {
                                     <h2>Largest Collections</h2>
                                     <ul>
                                         {largestCollections.data.map(
-                                            (collection: any) => (
-                                                <li
-                                                    key={
-                                                        collection.collection_id
-                                                    }
-                                                >
+                                            (collection: any, i) => (
+                                                <li key={i}>
                                                     <Link
-                                                        to={`/collections/${collection.collection_id}`}
+                                                        to={`/guest/collections/${collection._id}`}
                                                     >
                                                         {collection.name}
                                                     </Link>
@@ -96,6 +92,18 @@ const App: React.FC = () => {
                             </div>
                         }
                     ></Route>
+
+                    <Route
+                        path="/guest/collections/:collection_id"
+                        element={
+                            <>
+                                <div className="header_custom">
+                                    <Header isAuthenticated={false} />
+                                </div>
+                                <GuestCollectionTable />
+                            </>
+                        }
+                    />
                     <Route
                         path="/registration"
                         element={
@@ -108,7 +116,7 @@ const App: React.FC = () => {
                             <div>
                                 {" "}
                                 <div className="header_custom">
-                                    <Header></Header>
+                                    <Header isAuthenticated={true} />
                                 </div>
                                 <UserCollections />
                             </div>
@@ -119,7 +127,7 @@ const App: React.FC = () => {
                         element={
                             <div>
                                 <div className="header_custom">
-                                    <Header></Header>
+                                    <Header isAuthenticated={true} />
                                 </div>
                                 <CreateCollection />
                             </div>
@@ -130,7 +138,7 @@ const App: React.FC = () => {
                         element={
                             <div>
                                 <div className="header_custom">
-                                    <Header></Header>
+                                    <Header isAuthenticated={true} />
                                 </div>
                                 <CollectionDetails />
                             </div>
@@ -141,7 +149,7 @@ const App: React.FC = () => {
                         element={
                             <div>
                                 <div className="header_custom">
-                                    <Header></Header>
+                                    <Header isAuthenticated={true} />
                                 </div>
                                 <AccountSettings></AccountSettings>
                             </div>
@@ -152,7 +160,7 @@ const App: React.FC = () => {
                         element={
                             <div>
                                 <div className="header_custom">
-                                    <Header></Header>
+                                    <Header isAuthenticated={true} />
                                 </div>
                                 <EditCollection></EditCollection>
                             </div>
@@ -163,7 +171,7 @@ const App: React.FC = () => {
                         element={
                             <div>
                                 <div className="header_custom">
-                                    <Header></Header>
+                                    <Header isAuthenticated={true} />
                                 </div>
                                 <ItemDetails></ItemDetails>
                             </div>

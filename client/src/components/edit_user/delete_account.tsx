@@ -13,7 +13,7 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ userId }) => {
         if (userId) {
             await deleteUserAsync(userId);
             localStorage.clear();
-            window.location.href = "/main";
+            window.location.href = "/";
         }
     };
 

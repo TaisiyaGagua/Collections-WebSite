@@ -36,7 +36,7 @@ const AuthenticationContainer: React.FC = () => {
                     </div>
                 </div>
             )}
-            <BackToMainBtn></BackToMainBtn>
+            <BackToMainBtn />
         </div>
     );
 };

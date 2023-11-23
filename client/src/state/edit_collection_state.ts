@@ -25,7 +25,6 @@ const editCollectionSlice = createSlice({
             state.isLoaded = true;
         },
         getCollectionFailure: (state, action) => {},
-
         updateCollectionRequest: (state, action) => {},
         updateCollectionSuccess: (state, action) => {
             state.description = action.payload.description;

@@ -27,7 +27,7 @@ function seedDatabase() {
             ];
             for (const collectionName of collectionNames) {
                 yield db.createCollection(collectionName);
-                console.log(`Коллекция "${collectionName}" успешно создана`);
+                console.log(`Collection "${collectionName}" created`);
             }
             const usersToInsert = [];
             for (let i = 0; i < 10; i++) {
@@ -68,11 +68,11 @@ function seedDatabase() {
             yield db
                 .collection("user_role")
                 .insertMany([...userRolePairs, tayaUserRolePair]);
-            console.log("Данные успешно добавлены в базу данных");
+            console.log("Success");
             client.close();
         }
         catch (error) {
-            console.error("Ошибка при добавлении данных:", error);
+            console.error("Error", error);
         }
     });
 }

@@ -27,10 +27,11 @@ require("dotenv").config({ path: "./.env" });
 const port = process.env.PORT || 5002;
 app.use(cors());
 app.use(express_1.default.json());
-app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
-    yield data_access_1.default.connect(process.env.ATLAS_URI);
-    console.log(`Server is running on port: ${port}`);
-}));
+data_access_1.default.connect(process.env.ATLAS_URI).then(() => {
+    app.listen(port, () => {
+        console.log(`Server is running on port: ${port}`);
+    });
+});
 app.get("/collections/largest", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const limit = 5;
@@ -66,9 +67,9 @@ app.get("/collections/largest", (req, res) => __awaiter(void 0, void 0, void 0, 
         res.json(collectionDetails);
     }
     catch (error) {
-        console.error("Ошибка при поиске коллекций:", error);
+        console.error("Cannot find collection:", error);
         res.status(500).json({
-            error: "Произошла ошибка при поиске коллекций.",
+            error: "Internal server error",
         });
     }
 }));
@@ -94,9 +95,9 @@ app.get("/latestItems", (req, res) => __awaiter(void 0, void 0, void 0, function
         res.json(items);
     }
     catch (error) {
-        console.error("Ошибка при поиске последних элементов:", error);
+        console.error("Cannot find items:", error);
         res.status(500).json({
-            error: "Произошла ошибка при поиске последних элементов.",
+            error: "Internal server error",
         });
     }
 }));
@@ -108,7 +109,7 @@ app.post("/users", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         newUser.email = email;
         newUser.password = password;
         let result = yield user_1.default.create(newUser);
-        console.log("ID нового пользователя:", result);
+        console.log("ID new user:", result);
         const userRole = yield role_1.default.findOne({ name: "user" });
         if (!userRole) {
             const newUserRole = new role_1.default({ name: "user" });
@@ -125,9 +126,9 @@ app.post("/users", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
     }
     catch (error) {
-        console.error("Ошибка при добавлении пользователя:", error);
+        console.error("Cannot add new user", error);
         res.status(500).json({
-            error: "Произошла ошибка при добавлении пользователя.",
+            error: "Internal server error",
         });
     }
 }));
@@ -160,7 +161,7 @@ app.post("/collections", (req, res) => __awaiter(void 0, void 0, void 0, functio
         newCollection.config = config;
         newCollection.description = description;
         let result = yield collection_1.default.create(newCollection);
-        console.log("ID новой коллекции:", result.id);
+        console.log("ID new collection:", result.id);
         const collectionIdObjectId = result._id;
         const userCollectionPairs = {};
         userCollectionPairs.user_id = new mongodb_1.ObjectId(user_id);
@@ -172,9 +173,9 @@ app.post("/collections", (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(201).json({ collectionIdObjectId });
     }
     catch (error) {
-        console.error("Ошибка при добавлении коллекции:", error);
+        console.error("Cannot add new collection:", error);
         res.status(500).json({
-            error: "Произошла ошибка при добавлении коллекции.",
+            error: "Internal server error",
         });
     }
 }));
@@ -203,12 +204,12 @@ app.get("/:user_id/collection", (req, res) => __awaiter(void 0, void 0, void 0, 
             res.json(collection);
         }
         else {
-            res.status(404).json({ error: "Config не найден" });
+            res.status(404).json({ error: "Collection not found" });
         }
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 }));
 app.get("/collections/:collection_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -219,12 +220,12 @@ app.get("/collections/:collection_id", (req, res) => __awaiter(void 0, void 0, v
             res.json(collection);
         }
         else {
-            res.status(404).json({ error: "Config не найден" });
+            res.status(404).json({ error: "Config not found" });
         }
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 }));
 app.get("/collections/:collection_id/:item_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -240,16 +241,16 @@ app.get("/collections/:collection_id/:item_id", (req, res) => __awaiter(void 0, 
                 res.json(foundItem);
             }
             else {
-                res.status(404).json({ error: "Элемент не найден" });
+                res.status(404).json({ error: "Item not found" });
             }
         }
         else {
-            res.status(404).json({ error: "Коллекция не найдена" });
+            res.status(404).json({ error: "Collection not found" });
         }
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 }));
 app.get("/collection/:collection_id/items", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -262,12 +263,12 @@ app.get("/collection/:collection_id/items", (req, res) => __awaiter(void 0, void
             res.json(items);
         }
         else {
-            res.status(404).json({ error: "Config не найден" });
+            res.status(404).json({ error: "Items not found" });
         }
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 }));
 app.get("/users/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -280,12 +281,12 @@ app.get("/users/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, funct
             res.json(user);
         }
         else {
-            res.status(404).json({ error: "user не найден" });
+            res.status(404).json({ error: "User not found" });
         }
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при получении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 }));
 app.put("/users/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -298,22 +299,20 @@ app.put("/users/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, funct
             }
         }
         if (Object.keys(updateFields).length === 0) {
-            return res
-                .status(400)
-                .json({ message: "Не переданы данные для обновления" });
+            return res.status(400).json({ message: "No data to update" });
         }
         const user = yield user_1.default.updateOne({ _id: userID }, { $set: updateFields });
         if (user) {
-            res.status(200).json({ message: "Пользователь успешно обновлен" });
+            res.status(200).json({ message: "User successesfully updated" });
         }
         else {
-            res.status(404).json({ message: "Пользователь не найден" });
+            res.status(404).json({ message: "User not found" });
         }
     }
     catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Произошла ошибка при обновлении пользователя",
+            message: "Internal server error",
         });
     }
 }));
@@ -336,13 +335,13 @@ app.put("/collections/:collection_id", (req, res) => __awaiter(void 0, void 0, v
             res.json(updatedCollection);
         }
         else {
-            res.status(404).json({ error: "Коллекция не найдена" });
+            res.status(404).json({ error: "Collection not found" });
         }
     }
     catch (error) {
-        console.error("Ошибка при обновлении коллекции:", error);
+        console.error("Cannot update collection", error);
         res.status(500).json({
-            error: "Произошла ошибка при обновлении коллекции.",
+            error: "Internal server error",
         });
     }
 }));
@@ -370,6 +369,43 @@ app.put("/collections/:collection_id/:item_id", (req, res) => __awaiter(void 0, 
         return res.status(500).json({ error: "Internal server error" });
     }
 }));
+app.put("/config/collections/:collection_id/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const collectionId = req.params.collection_id;
+        const oldKey = req.body.oldKey;
+        const newKey = req.body.newKey;
+        const existingCollection = yield collection_item_1.default.findOne({
+            collection_id: collectionId,
+        });
+        if (!existingCollection) {
+            return res.status(404).json({ error: "Collection not found" });
+        }
+        const updatedItems = existingCollection.items.map((currentItem) => {
+            if (oldKey in currentItem) {
+                currentItem[newKey] = currentItem[oldKey];
+                delete currentItem[oldKey];
+            }
+            return currentItem;
+        });
+        const updatedCollection = yield collection_item_1.default.findOneAndUpdate({
+            collection_id: collectionId,
+        }, {
+            $set: {
+                items: updatedItems,
+            },
+        }, { new: true });
+        if (updatedCollection) {
+            res.json(updatedCollection);
+        }
+        else {
+            res.status(404).json({ error: "Collection not found" });
+        }
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}));
 app.delete("/users/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userID = req.params.user_id;
@@ -386,7 +422,7 @@ app.delete("/users/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при удалении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
 }));
 app.delete("/collections/:collection_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -402,12 +438,12 @@ app.delete("/collections/:collection_id", (req, res) => __awaiter(void 0, void 0
             collection_id: collectionId,
         });
         res.json(deletedCollection);
-        console.log("Коллекция удалена");
+        console.log("Collection deleted");
     }
     catch (error) {
-        console.error("Ошибка при обновлении коллекции:", error);
+        console.error("Cannot delete collection", error);
         res.status(500).json({
-            error: "Произошла ошибка при обновлении коллекции.",
+            error: "Internal server error",
         });
     }
 }));
@@ -423,15 +459,18 @@ app.delete("/collections/:collection_id/:item_id", (req, res) => __awaiter(void 
         }
         const itemIndex = collection.items.findIndex((item) => String(item.item_id) === String(itemId));
         if (itemIndex === -1) {
-            return res.status(404).json({ error: "Элемент не найден" });
+            return res.status(404).json({ error: "Item not found" });
         }
         collection.items.splice(itemIndex, 1);
         yield collection.save();
-        res.json({ message: "Элемент успешно удален" });
+        res.json({ message: "Item deleted" });
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Ошибка при удалении данных" });
+        res.status(500).json({ error: "Internal server error" });
     }
+}));
+app.get("/health", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    return res.json({ status: "ok" });
 }));
 //# sourceMappingURL=server.js.map

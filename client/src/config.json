@@ -13,6 +13,7 @@
 	"updateUserEndpoint": "users/{userId}",
 	"updateCollectionEndpoint": "collections/{collectionId}",
 	"updateItemEndpoint": "collections/{collectionId}/{itemId}",
+	"updateCollectionConfigEndpoint": "config/collections/{collectionId}",
 
 	"deleteUserEndpoint": "users/{userId}",
 	"deleteCollectionEndpoint": "collections/{collectionId}",
