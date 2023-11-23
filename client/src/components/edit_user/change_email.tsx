@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { updateUserAsync } from "../../services/api_client";
-import { UserDetails } from "../../dtos/user_settings";
+import { UserDetails } from "../../dtos/user_details";
 
 const ChangeEmail: React.FC = () => {
     const [userDetails, setUserDetails] = useState<UserDetails>({

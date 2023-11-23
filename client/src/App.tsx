@@ -3,7 +3,6 @@ import "./custom.css";
 import CreateCollection from "./components/add_collection";
 import UserCollections from "./components/collections_cards";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import CollectionDetails from "./components/collection_items_table";
 import AccountSettings from "./components/edit_user/user_settings";
 import EditCollection from "./components/edit_collection/collection_edit";
 import ItemDetails from "./components/edit_item/edit_item";
@@ -14,9 +13,9 @@ import {
 import { ItemDto } from "./dtos/requests/create_item_dto";
 import { ApiResultWrapper } from "./common/api_result_wrapper";
 import { CollectionResponseDto } from "./dtos/responses/collection_response_dto";
-import AuthenticationContainer from "./components/enterance/enterance";
+import AuthenticationContainer from "./components/auth/auth_page";
 import Header from "./components/headers/header";
-import GuestCollectionTable from "./components/collection_items";
+import CollectionItems from "./components/collection_items_table";
 
 const App: React.FC = () => {
     localStorage.setItem("isAuthenticated", "false");
@@ -100,7 +99,9 @@ const App: React.FC = () => {
                                 <div className="header_custom">
                                     <Header isAuthenticated={false} />
                                 </div>
-                                <GuestCollectionTable />
+                                <CollectionItems
+                                    isAuthorized={false}
+                                ></CollectionItems>
                             </>
                         }
                     />
@@ -140,7 +141,9 @@ const App: React.FC = () => {
                                 <div className="header_custom">
                                     <Header isAuthenticated={true} />
                                 </div>
-                                <CollectionDetails />
+                                <CollectionItems
+                                    isAuthorized={true}
+                                ></CollectionItems>
                             </div>
                         }
                     />

@@ -1,9 +1,9 @@
 import React from "react";
-import BackToAuthorisedBtn from "../buttons/back_to_authorised_btn";
 import DeleteAccount from "./delete_account";
 import ChangePassword from "./change_password";
 import ChangeEmail from "./change_email";
 import ChangeUsername from "./change_username";
+import BackButton from "../buttons/back_to_main";
 
 const AccountSettings: React.FC = () => {
     let userId = localStorage.getItem("userId");
@@ -15,7 +15,7 @@ const AccountSettings: React.FC = () => {
             <ChangeEmail />
             <ChangePassword />
             <DeleteAccount userId={userId}></DeleteAccount>
-            <BackToAuthorisedBtn />
+            <BackButton to="/authorised" />
         </div>
     );
 };

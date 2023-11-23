@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Auth from "./authentication";
-import { CreateUserComponent } from "./create_user";
-import BackToMainBtn from "../buttons/back_to_main";
+import LoginForm from "./login_form";
+import { CreateUserComponent } from "./create_user_form";
+import BackButton from "../buttons/back_to_main";
 
 const AuthenticationContainer: React.FC = () => {
     const [isRegistrationPage, setIsRegistrationPage] = useState(true);
@@ -24,7 +24,7 @@ const AuthenticationContainer: React.FC = () => {
                 </div>
             ) : (
                 <div className="autentification_container">
-                    <Auth />
+                    <LoginForm />
                     <div className="checking_container">
                         <h6>Don't have an account?</h6>
                         <button
@@ -36,7 +36,7 @@ const AuthenticationContainer: React.FC = () => {
                     </div>
                 </div>
             )}
-            <BackToMainBtn />
+            <BackButton to="/" />
         </div>
     );
 };

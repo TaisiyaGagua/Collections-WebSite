@@ -9,7 +9,7 @@ export interface RegistrationFormData {
     password: string;
 }
 
-function CreateUserComponent() {
+function CreateUserForm() {
     const [form, setForm] = useState<CreateUserDto>({
         username: "",
         email: "",
@@ -99,4 +99,4 @@ function CreateUserComponent() {
     );
 }
 
-export { CreateUserComponent };
+export { CreateUserForm as CreateUserComponent };

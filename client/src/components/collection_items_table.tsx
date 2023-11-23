@@ -6,9 +6,13 @@ import {
     getCollectionAsync,
 } from "../services/api_client";
 import AddItemForm from "./add_item";
-import BackToAuthorisedBtn from "./buttons/back_to_authorised_btn";
+import BackButton from "./buttons/back_to_main";
 
-const CollectionDetails: React.FC = () => {
+interface CommonTableProps {
+    isAuthorized: boolean;
+}
+
+const CollectionItems: React.FC<CommonTableProps> = ({ isAuthorized }) => {
     const { collection_id } = useParams<{ collection_id: string }>();
     const [collectionName, setCollectionName] = useState<string | null>(null);
     const [collectionDescription, setCollectionDescription] = useState<
@@ -61,7 +65,7 @@ const CollectionDetails: React.FC = () => {
                         <tr key={index}>
                             {tableHeaders.map((header) => (
                                 <td key={header}>
-                                    {header === "name" ? (
+                                    {header === "name" && isAuthorized ? (
                                         <Link
                                             to={`/collection/${collection_id}/item/${item.item_id}`}
                                         >
@@ -79,33 +83,33 @@ const CollectionDetails: React.FC = () => {
         );
     };
 
-    const handleAddItem = (newItem: any) => {
-        const fetchData = async () => {
-            if (newItem && collection_id) {
-                let result = await createItemAsync(newItem, collection_id);
-                console.log(result);
-            }
-        };
-
-        fetchData();
-        setItems((prevItems: any) => [...prevItems, newItem]);
+    const handleAddItem = async (newItem: any) => {
+        if (newItem && collection_id) {
+            let result = await createItemAsync(newItem, collection_id);
+            console.log(result);
+            const fetchedItems = await getAllItemsAsync(collection_id);
+            setItems(fetchedItems);
+        }
     };
-
     return (
-        <div className="collection-details">
-            {collectionName ? (
+        <div className="common-table">
+            {collectionName && (
                 <div>
-                    <h2 className="text-center">{collectionName}</h2>
+                    <h2>{collectionName}</h2>
                     <p>{collectionDescription}</p>
-                    {renderTable()}
-                    <AddItemForm config={config} onAddItem={handleAddItem} />
                 </div>
-            ) : (
-                <p>Loading...</p>
             )}
-            <BackToAuthorisedBtn />
+            {renderTable()}
+            {isAuthorized ? (
+                <>
+                    <AddItemForm config={config} onAddItem={handleAddItem} />
+                    <BackButton to="/authorised" />
+                </>
+            ) : (
+                <BackButton to="/" />
+            )}
         </div>
     );
 };
 
-export default CollectionDetails;
+export default CollectionItems;

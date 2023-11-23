@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { checkUserAsync } from "../../services/api_client";
 import { CheckUserDto } from "../../dtos/requests/check_user_dto";
 
-const Auth: React.FC = () => {
+const LoginForm: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -64,4 +64,4 @@ const Auth: React.FC = () => {
     );
 };
 
-export default Auth;
+export default LoginForm;

@@ -5,8 +5,8 @@ import {
     getItemAsync,
     updateItemAsync,
 } from "../../services/api_client";
-import BackToAuthorisedBtn from "../buttons/back_to_authorised_btn";
 import { ItemDto } from "../../dtos/requests/create_item_dto";
+import BackButton from "../buttons/back_to_main";
 
 const ItemDetails: React.FC = () => {
     const { collection_id, item_id } = useParams<{
@@ -154,7 +154,7 @@ const ItemDetails: React.FC = () => {
                     </div>
                 )}
             </div>
-            <BackToAuthorisedBtn />
+            <BackButton to="/authorised" />
         </div>
     );
 };

@@ -4,6 +4,11 @@ import { useParams } from "react-router-dom";
 import { CollectionResponseDto } from "../../dtos/responses/collection_response_dto";
 import { updateCollectionRequest } from "../../state/edit_collection_state";
 
+interface AddExtraFieldsProps {
+    showSaveButton: boolean;
+    onTableDataChange?: (newTableData: TableRow[]) => void;
+}
+
 interface TableRow {
     name: string;
     fieldType: string;
@@ -12,7 +17,10 @@ interface TableRow {
 
 const MAX_TOTAL_ROWS = 15;
 
-const AddExtraFields: React.FC = () => {
+const AddExtraFields: React.FC<AddExtraFieldsProps> = ({
+    showSaveButton,
+    onTableDataChange,
+}) => {
     const dispatch = useDispatch();
     const { collection_id } = useParams<{ collection_id: string }>();
     const currentCollectionState = useSelector(
@@ -54,9 +62,10 @@ const AddExtraFields: React.FC = () => {
         const updatedData = [...tableData];
         updatedData[index][key] = value;
         setTableData(updatedData);
+        if (onTableDataChange) onTableDataChange(updatedData);
     };
 
-    const saveField = async () => {
+    const onSaveButtonClick = async () => {
         const config = JSON.parse(currentCollectionState.config);
 
         const schema: { [key: string]: string } = {};
@@ -162,10 +171,10 @@ const AddExtraFields: React.FC = () => {
             >
                 Add a new field
             </button>
-            {isNewFieldAdded && (
+            {isNewFieldAdded && showSaveButton && (
                 <button
                     className="btn btn-primary"
-                    onClick={saveField}
+                    onClick={onSaveButtonClick}
                     disabled={!canAddRow()}
                 >
                     Save extra-field
